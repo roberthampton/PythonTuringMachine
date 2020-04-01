@@ -1,43 +1,37 @@
 #Turing Machine Simulator
 
-tape = []
 states = []
 fStates = []
 tapeSymbols = []
 transitionTable = []
 
-def initStates():
-    noStates = input("Enter number of states: ")
+def readTMFile():
+    tmFile = open('tm.txt', 'r') 
+    lines = tmFile.readlines() 
 
-    for i in range(0, int(noStates)):
-        state = input("Enter state: ")
-        states.append(state)
+    for i in range(len(lines)):
+        line = lines[i].strip()
+        if i == 0:
+            global states
+            states = line.split(",")
+        if i == 1:
+            global fStates
+            fStates = line.split(",")
+        if i == 2:
+            global tapeSymbols
+            tapeSymbols = line.split(",")
+        if i > 2:
+            stateTransitions = line.split(":")
 
-def initFStates():
-    noStates = input("Enter number of final states: ")
+            for i in range(len(stateTransitions)):
+                stateTransitions[i] = stateTransitions[i].split(",")
+            
+            
+            transitionTable.append(stateTransitions)
 
-    for i in range(0, int(noStates)):
-        state = input("Enter final state: ")
-        fStates.append(state)
+    tmFile.close()
 
-def initTapeSymbols():
-    noSymbols = input("Enter number of symbols: ")
 
-    for i in range(int(noSymbols)):
-        symbol = input("Enter symbol: ")
-        tapeSymbols.append(symbol)
-
-    tapeSymbols.append("B")
-
-def initTransitionTable():
-    print(states)
-    print(tapeSymbols)
-    for i in range(len(states)):
-        stateTransitions = []
-        for j in range(len(tapeSymbols)):
-            inputS = input("Enter transition for state " + states[i] + " on symbol " + tapeSymbols[j] + ": ")
-            stateTransitions.append(inputS.split(","))
-        transitionTable.append(stateTransitions)
 
 
 def takeInputString():
@@ -60,7 +54,6 @@ def runTuringMachine(inString):
         j = tapeSymbols.index(tape[tapehead])
 
         transition = transitionTable[i][j]
-
         if len(transition) == 3:
             currState = transition[0]
             tape[tapehead] = transition[1]
@@ -87,10 +80,7 @@ def runTuringMachine(inString):
 
 
 def main():
-    initStates()
-    initFStates()
-    initTapeSymbols()
-    initTransitionTable()
+    readTMFile()
     inString = takeInputString()
     tape = runTuringMachine(inString)
 
