@@ -26,18 +26,20 @@ def readTMFile():
             for i in range(len(stateTransitions)):
                 stateTransitions[i] = stateTransitions[i].split(",")
             
-            
             transitionTable.append(stateTransitions)
 
     tmFile.close()
-
-
-
 
 def takeInputString():
     inputString = input("Enter input string: ")
     return inputString
 
+def checkState(currState):
+    if currState in fStates:
+            print("Input Accepted")
+            return True
+    else:
+        return False
     
 def runTuringMachine(inString):
     tapehead = 0
@@ -46,12 +48,18 @@ def runTuringMachine(inString):
     count = 1000
 
     while count > 0:
-        if currState in fStates:
-            print("Input Accepted")
+        if checkState(currState):
             return tape
 
         i = states.index(currState)
         j = tapeSymbols.index(tape[tapehead])
+
+        printTape = []
+        for x in range(len(tape)): 
+            if x == tapehead:
+                printTape.append(currState)
+            
+            printTape.append(tape[x])
 
         transition = transitionTable[i][j]
         if len(transition) == 3:
@@ -62,18 +70,13 @@ def runTuringMachine(inString):
                 tapehead = tapehead -1
             elif transition[2] == "R":
                 tapehead = tapehead + 1
-                if tapehead > len(tape) - 1:
+                if tapehead > len(tape) - 1 and not checkState(currState):
                     tape.append("B")
         elif len(transition) == 1 and transition[0] == "-":
             print("Input Rejected")
             return tape
 
-        printTape = []
-        for i in range(len(tape)): 
-            if i == tapehead:
-                printTape.append(currState)
-            
-            printTape.append(tape[i])
+
         print(printTape)
                 
         count = count-1
@@ -81,10 +84,15 @@ def runTuringMachine(inString):
 
 def main():
     readTMFile()
-    inString = takeInputString()
-    tape = runTuringMachine(inString)
 
-    print(tape)
+    while True:
+        inString = takeInputString()
+
+        if inString == "q":
+            break
+
+        tape = runTuringMachine(inString)
+        print(tape)
     
    
 
